@@ -13,8 +13,11 @@ test.describe('Network Mocking Tests', () => {
       });
     });
 
-    const response = await page.request.get('https://reqres.in/api/users/2');
-    const body = await response.json();
+    await page.goto('about:blank');
+    const body = await page.evaluate(async () => {
+      const res = await fetch('https://reqres.in/api/users/2');
+      return await res.json();
+    });
 
     expect(body.data.first_name).toBe('FakeName');
   });
@@ -28,8 +31,13 @@ test.describe('Network Mocking Tests', () => {
       });
     });
 
-    const response = await page.request.get('https://reqres.in/api/users/2');
-    expect(response.status()).toBe(500);
+    await page.goto('about:blank');
+    const status = await page.evaluate(async () => {
+      const res = await fetch('https://reqres.in/api/users/2');
+      return res.status;
+    });
+
+    expect(status).toBe(500);
   });
 
   test('mock an empty list response', async ({ page }) => {
@@ -41,8 +49,11 @@ test.describe('Network Mocking Tests', () => {
       });
     });
 
-    const response = await page.request.get('https://reqres.in/api/users?page=2');
-    const body = await response.json();
+    await page.goto('about:blank');
+    const body = await page.evaluate(async () => {
+      const res = await fetch('https://reqres.in/api/users?page=2');
+      return await res.json();
+    });
 
     expect(body.data.length).toBe(0);
   });
